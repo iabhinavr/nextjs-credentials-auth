@@ -1,8 +1,8 @@
-"user server";
+"use server";
 
-import { getUserByEmail } from "@/lib/user.db";
-import { verifyPasswordHash } from "@/lib/password";
-import { generateSessionToken, createSession, setSessionTokenCookie } from "@/lib/session";
+import { getUserByEmail } from "@/app/lib/user.db";
+import { verifyPasswordHash } from "@/app/lib/password";
+import { generateSessionToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
 
 export async function loginAction(prevState, formData) {
 
@@ -15,7 +15,7 @@ export async function loginAction(prevState, formData) {
         }
     }
 
-    const user = getUserByEmail(email);
+    const user = await getUserByEmail(email);
 
     if(!user) {
         return {
@@ -23,6 +23,7 @@ export async function loginAction(prevState, formData) {
         }
     }
 
+    console.log(user);
     const hashVerification = await verifyPasswordHash(user.password_hash, password);
 
     if(!hashVerification) {

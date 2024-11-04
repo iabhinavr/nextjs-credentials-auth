@@ -1,8 +1,9 @@
 "use server";
 
-import { createUser, getUserByEmail, getUserByUsername } from "../../lib/user.db";
-import { hashPassword, verifyPasswordStrength } from "../../lib/password";
-import { generateSessionToken, createSession, setSessionTokenCookie } from "../../lib/session";
+import { createUser, getUserByEmail, getUserByUsername } from "@/app/lib/user.db";
+import { hash } from "@node-rs/argon2";
+import { hashPassword, verifyPasswordStrength } from "@/app/lib/password";
+import { generateSessionToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
 
 export async function signupAction(prevState, formData) {
 

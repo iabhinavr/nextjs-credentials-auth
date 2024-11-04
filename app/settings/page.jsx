@@ -1,4 +1,4 @@
-import { getSession } from "../../lib/session";
+import { getSession } from "@/app/lib/session";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
@@ -8,7 +8,7 @@ export default async function Page() {
     if(!session) {
         redirect("/login");
     }
-    
+
     return (
         <>
         <h1>Dashboard</h1>
