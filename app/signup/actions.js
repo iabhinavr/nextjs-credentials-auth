@@ -1,27 +1,86 @@
 "use server";
 
-import { createUser } from "../../lib/user.db";
+import { createUser, getUserByEmail, getUserByUsername } from "../../lib/user.db";
 import { hash } from "@node-rs/argon2";
+import { hashPassword, verifyPasswordStrength } from "../../lib/password";
+import { generateSessionToken, createSession, setSessionTokenCookie } from "../../lib/session";
 
-export async function signupAction(_prev, formData) {
+export async function signupAction(prevState, formData) {
 
     const username = formData.get("username");
     const email = formData.get("email");
     const password = formData.get("password");
 
+    // check if the user already exists
+
+    let user = await getUserByEmail(email);
+    
+    if(user === false) {
+        return {
+            message: "error occurred",
+        }
+    }
+    else if(user !== null) {
+        return {
+            message: "an account already exists with that email",
+        }
+    }
+
+    user = await getUserByUsername(username);
+
+    if(user === false) {
+        return {
+            message: "error occurred",
+        }
+    }
+    else if(user !== null) {
+        return {
+            message: "username already taken",
+        }
+    }
+
+    let passwordStrength = await verifyPasswordStrength(password);
+
+    if(!passwordStrength) {
+        return {
+            message: "password is invalid"
+        }
+    }
+
+    switch(passwordStrength) {
+        case "short":
+            return { message: "password must be at least 8 characters long" };
+        case "long":
+            return { message: "password length cannot be more than 72 characters" };
+        case "weak":
+            return { message: "weak password, must contain uppercase, lowercase, and special character" };
+        case "pwned":
+            return { message: "weak password, try another combination" };
+    }
+
+    if(passwordStrength !== "ok") {
+        return { message: "some error occurred" };
+    }
+
     const userData = {
         username: username,
         email: email,
-        password_hash: await hash(password, {
-            memoryCost: 19456,
-            timeCost: 2,
-            outputLen: 32,
-            parallelism: 1,
-        }),
+        password_hash: await hashPassword(password),
     }
 
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
     const newUser = await createUser(userData);
-    console.log(newUser);
+    const token = generateSessionToken();
+    
+    const session = await createSession(token, newUser._id, expiresAt);
+
+    if(!session) {
+        return {
+            message: "session error",
+        }
+    }
+
+    await setSessionTokenCookie(token, expiresAt);
 
     return {
         message: "Signed up",

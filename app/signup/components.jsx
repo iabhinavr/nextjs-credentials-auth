@@ -17,6 +17,7 @@ export function SignUpForm() {
     return (
         <>
         <form action={action} id="signup-form">
+            <h1>Create an account</h1>
             <label htmlFor="signup-form-username">Username</label>
             <input type="text" name="username" id="signup-form-username" required minLength={4} maxLength={31} />
 

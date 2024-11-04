@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/signup/actions.js", "app/signup/components.jsx", "app/signup/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/signup/actions.js", "app/signup/components.jsx", "app/signup/page.jsx", "app/login/actions.js", "app/login/components.jsx", "app/login/page.jsx", "lib/test.js"],
   "exclude": ["node_modules"]
 }
