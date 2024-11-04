@@ -1,7 +1,6 @@
 "use server";
 
 import { createUser, getUserByEmail, getUserByUsername } from "../../lib/user.db";
-import { hash } from "@node-rs/argon2";
 import { hashPassword, verifyPasswordStrength } from "../../lib/password";
 import { generateSessionToken, createSession, setSessionTokenCookie } from "../../lib/session";
 
@@ -70,15 +69,10 @@ export async function signupAction(prevState, formData) {
 
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
     const newUser = await createUser(userData);
+    
     const token = generateSessionToken();
     
-    const session = await createSession(token, newUser._id, expiresAt);
-
-    if(!session) {
-        return {
-            message: "session error",
-        }
-    }
+    await createSession(token, newUser._id, expiresAt);
 
     await setSessionTokenCookie(token, expiresAt);
 
