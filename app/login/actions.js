@@ -3,6 +3,7 @@
 import { getUserByEmail } from "@/app/lib/user.db";
 import { verifyPasswordHash } from "@/app/lib/password";
 import { generateSessionToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
+import { redirect } from "next/navigation";
 
 export async function loginAction(prevState, formData) {
 
@@ -37,6 +38,8 @@ export async function loginAction(prevState, formData) {
     await createSession(token, user._id, expiresAt);
     await setSessionTokenCookie(token, expiresAt);
 
+    redirect("/settings");
+    
     return {
         message: "logged in"
     }

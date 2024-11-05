@@ -29,3 +29,14 @@ body {
 .login-links a {
   @apply block text-center p-1 underline hover:text-emerald-700;
 }
+
+.admin-page {
+  @apply max-w-[80vw] m-auto
+}
+.admin-page h1 {
+  @apply text-3xl py-2 text-slate-800;
+}
+
+.admin-page h2 {
+  @apply text-xl py-1 border-b mb-1;
+}

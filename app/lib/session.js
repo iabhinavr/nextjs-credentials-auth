@@ -68,8 +68,7 @@ export async function setSessionTokenCookie(token, expiresAt) {
 }
 
 export async function deleteSessionTokenCookie() {
-    const cookieStore = await cookies();
-    cookieStore().set("next_app_session", "", {
+    (await cookies()).set("next_app_session", "", {
         httpOnly: true,
         path: '/',
         samesite: 'lax',

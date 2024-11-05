@@ -4,6 +4,7 @@ import { createUser, getUserByEmail, getUserByUsername } from "@/app/lib/user.db
 import { hash } from "@node-rs/argon2";
 import { hashPassword, verifyPasswordStrength } from "@/app/lib/password";
 import { generateSessionToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
+import { redirect } from "next/navigation";
 
 export async function signupAction(prevState, formData) {
 
@@ -66,6 +67,7 @@ export async function signupAction(prevState, formData) {
         username: username,
         email: email,
         password_hash: await hashPassword(password),
+        email_verified: false,
     }
 
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
@@ -76,6 +78,8 @@ export async function signupAction(prevState, formData) {
     await createSession(token, newUser._id, expiresAt);
 
     await setSessionTokenCookie(token, expiresAt);
+
+    redirect("/settings");
 
     return {
         message: "Signed up",

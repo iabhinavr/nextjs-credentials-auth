@@ -5,6 +5,7 @@ const userSchema = new Schema({
     email: String,
     username: String,
     password_hash: String,
+    email_verified: Boolean,
 });
 
 export const User = models?.User || model('User', userSchema);
