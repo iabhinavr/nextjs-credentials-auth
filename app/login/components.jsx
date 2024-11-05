@@ -4,8 +4,9 @@ import { useActionState } from "react";
 import { loginAction } from "./actions";
 
 const initialState = {
-    message: ""
-};
+    status: null,
+    errors: []
+}
 
 export function LoginForm() {
 

@@ -40,3 +40,7 @@ body {
 .admin-page h2 {
   @apply text-xl py-1 border-b mb-1;
 }
+
+.form-error-box {
+  @apply bg-red-500 p-2 text-slate-100 list-disc list-inside rounded-md;
+}

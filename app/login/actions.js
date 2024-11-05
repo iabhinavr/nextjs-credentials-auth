@@ -7,30 +7,27 @@ import { redirect } from "next/navigation";
 
 export async function loginAction(prevState, formData) {
 
+    let result = {
+        status: false,
+        errors: []
+    }
+
     const email = formData.get('email');
     const password = formData.get('password');
-
-    if(email === '' || password === '') {
-        return {
-            message: "Email and password cannot be empty"
-        }
-    }
 
     const user = await getUserByEmail(email);
 
     if(!user) {
-        return {
-            message: "Incorrect username or password"
-        }
+        result.errors = [{message: "Incorrect username or password"}]
+        return result;
     }
 
     console.log(user);
     const hashVerification = await verifyPasswordHash(user.password_hash, password);
 
     if(!hashVerification) {
-        return {
-            message: "Incorrect username or password"
-        }
+        result.errors = [{message: "Incorrect username or password"}]
+        return result;
     }
 
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
@@ -40,7 +37,6 @@ export async function loginAction(prevState, formData) {
 
     redirect("/settings");
     
-    return {
-        message: "logged in"
-    }
+    result.status = true;
+    return result;
 }

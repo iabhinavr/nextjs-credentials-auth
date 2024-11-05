@@ -5,7 +5,8 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 const initialState = {
-    message: "",
+    status: null,
+    errors: []
 }
 
 export function SignUpForm() {
@@ -16,6 +17,17 @@ export function SignUpForm() {
 
     return (
         <>
+        {
+            (state.status === false) &&
+            <>
+            <ul className="form-error-box">
+                { state.errors.map((error, index) => (
+                    <li key={index}>{error.message}</li>
+                ))}
+            </ul>
+            </>
+            
+        }
         <form action={action} id="signup-form">
             <h1>Create an account</h1>
             <label htmlFor="signup-form-username">Username</label>
@@ -28,8 +40,6 @@ export function SignUpForm() {
             <input type="password" name="password" id="signup-form-password" required autoComplete="new-password" />
 
             <button>Continue</button>
-
-            <p>{state.message}</p>
 
         </form>
         </>

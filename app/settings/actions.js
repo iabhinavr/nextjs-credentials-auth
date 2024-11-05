@@ -1,6 +1,7 @@
 "use server";
 
 import { getSession, deleteSession, deleteUserSessions, deleteSessionTokenCookie } from "@/app/lib/session";
+import { redirect } from "next/navigation";
 
 export async function LogoutAction(prevState, formData) {
 
@@ -28,6 +29,8 @@ export async function LogoutAction(prevState, formData) {
 
     await deleteUserSessions(session.user._id);
     await deleteSessionTokenCookie();
+
+    redirect("/login");
 
     return {
         message: "signed out"

@@ -2,65 +2,57 @@
 
 import { createUser, getUserByEmail, getUserByUsername } from "@/app/lib/user.db";
 import { hash } from "@node-rs/argon2";
-import { hashPassword, verifyPasswordStrength } from "@/app/lib/password";
+import { hashPassword } from "@/app/lib/password";
 import { generateSessionToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
 import { redirect } from "next/navigation";
 
+import { validateSignupData } from "@/app/lib/validations";
+import { checkBreachedPassword } from "@/app/lib/validations";
+
 export async function signupAction(prevState, formData) {
+
+    let result = {
+        status: false,
+        errors: []
+    }
 
     const username = formData.get("username");
     const email = formData.get("email");
     const password = formData.get("password");
 
+    // validate the form using zod
+
+    const validation = await validateSignupData({username, email, password});
+
+    if(validation?.success === false) {
+
+        result.errors = validation.errors;
+        
+        return result;
+    }
+
     // check if the user already exists
 
     let user = await getUserByEmail(email);
     
-    if(user === false) {
-        return {
-            message: "error occurred",
-        }
-    }
-    else if(user !== null) {
-        return {
-            message: "an account already exists with that email",
-        }
+    
+    if(user !== null) {
+        result.errors = [{message: "the email already exists"}];
+        return result;
     }
 
     user = await getUserByUsername(username);
 
-    if(user === false) {
-        return {
-            message: "error occurred",
-        }
-    }
-    else if(user !== null) {
-        return {
-            message: "username already taken",
-        }
+    if(user !== null) {
+        result.errors = [{message: "username already taken"}];
+        return result;
     }
 
-    let passwordStrength = await verifyPasswordStrength(password);
+    const isPasswordBreached = await checkBreachedPassword(password);
 
-    if(!passwordStrength) {
-        return {
-            message: "password is invalid"
-        }
-    }
-
-    switch(passwordStrength) {
-        case "short":
-            return { message: "password must be at least 8 characters long" };
-        case "long":
-            return { message: "password length cannot be more than 72 characters" };
-        case "weak":
-            return { message: "weak password, must contain uppercase, lowercase, and special character" };
-        case "pwned":
-            return { message: "weak password, try another combination" };
-    }
-
-    if(passwordStrength !== "ok") {
-        return { message: "some error occurred" };
+    if(isPasswordBreached === "pwned") {
+        result.errors = [{message: "This password is known to be vulnerable"}];
+        return result;
     }
 
     const userData = {
@@ -81,7 +73,6 @@ export async function signupAction(prevState, formData) {
 
     redirect("/settings");
 
-    return {
-        message: "Signed up",
-    }
+    result.status = true;
+    return result;
 }
