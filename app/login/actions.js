@@ -1,6 +1,6 @@
 "use server";
 
-import { getUserByEmail } from "@/app/lib/user.db";
+import { getUserByEmail } from "@/app/lib/user";
 import { verifyPasswordHash } from "@/app/lib/password";
 import { generateSessionToken, generateCsrfToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
 import { redirect } from "next/navigation";

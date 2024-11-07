@@ -1,6 +1,6 @@
 "use server";
 
-import { createUser, getUserByEmail, getUserByUsername } from "@/app/lib/user.db";
+import { createUser, getUserByEmail, getUserByUsername } from "@/app/lib/user";
 import { hash } from "@node-rs/argon2";
 import { hashPassword } from "@/app/lib/password";
 import { generateSessionToken, generateCsrfToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
