@@ -1,6 +1,7 @@
 import { getSession } from "@/app/lib/session";
 import { redirect } from "next/navigation";
 import { LogoutForm } from "./components";
+import { CookieChecker } from "@/app/lib/cookieChecker";
 
 export default async function Page() {
 
@@ -10,14 +11,16 @@ export default async function Page() {
         redirect("/login");
     }
 
+    console.log(session);
+
     return (
         <>
         <div className="admin-page">
             <h1>Welcome, {session.user.username}</h1>
             <h2>Change Password</h2>
-            <LogoutForm />
+            <LogoutForm csrfToken={session?.csrfToken} />
         </div>
-        
+        <CookieChecker />
         </>
     )
 }

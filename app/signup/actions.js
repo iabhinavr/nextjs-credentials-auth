@@ -3,7 +3,7 @@
 import { createUser, getUserByEmail, getUserByUsername } from "@/app/lib/user.db";
 import { hash } from "@node-rs/argon2";
 import { hashPassword } from "@/app/lib/password";
-import { generateSessionToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
+import { generateSessionToken, generateCsrfToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
 import { redirect } from "next/navigation";
 
 import { validateSignupData } from "@/app/lib/validations";
@@ -66,8 +66,9 @@ export async function signupAction(prevState, formData) {
     const newUser = await createUser(userData);
     
     const token = generateSessionToken();
+    const csrfToken = generateCsrfToken();
     
-    await createSession(token, newUser._id, expiresAt);
+    await createSession(token, newUser._id, expiresAt, csrfToken);
 
     await setSessionTokenCookie(token, expiresAt);
 

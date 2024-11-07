@@ -19,6 +19,9 @@ const sessionSchema = new Schema({
         ref: 'User',
     },
     expiresAt: Date,
+    csrfToken: {
+        type: String,
+    }
 });
 
 export const Session = models?.Session || model('Session', sessionSchema);

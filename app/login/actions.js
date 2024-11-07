@@ -2,7 +2,7 @@
 
 import { getUserByEmail } from "@/app/lib/user.db";
 import { verifyPasswordHash } from "@/app/lib/password";
-import { generateSessionToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
+import { generateSessionToken, generateCsrfToken, createSession, setSessionTokenCookie } from "@/app/lib/session";
 import { redirect } from "next/navigation";
 
 export async function loginAction(prevState, formData) {
@@ -32,7 +32,9 @@ export async function loginAction(prevState, formData) {
 
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
     const token = generateSessionToken();
-    await createSession(token, user._id, expiresAt);
+    const csrfToken = generateCsrfToken();
+
+    await createSession(token, user._id, expiresAt, csrfToken);
     await setSessionTokenCookie(token, expiresAt);
 
     redirect("/settings");

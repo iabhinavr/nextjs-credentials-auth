@@ -21,12 +21,27 @@ export async function getSession() {
             return false;
         }
 
-
         if(storedSession.user === null) {
             return false;
         }
+
+        const session = storedSession;
+
+        // check if the session has expired or not
+
+        if(Date.now() > session.expiresAt.getTime()) {
+            await deleteUserSessions(session.user._id);
+            return false;
+        }
+
+        // if the session is about to expire, then extend it for another month from now
+
+        if(Date.now() > session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 10) {
+            const newExpiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+            await Session.updateOne({sessionId: sessionId}, {expiresAt: newExpiresAt}).exec();
+        }
         
-        return storedSession;
+        return session;
 
     }
     catch(error) {
@@ -83,13 +98,22 @@ export function generateSessionToken() {
     return token;
 }
 
-export async function createSession(token, userId, expiresAt) {
+export function generateCsrfToken() {
+    const tokenBytes = new Uint8Array(20);
+    crypto.getRandomValues(tokenBytes);
+    const token = encodeBase32LowerCaseNoPadding(tokenBytes).toLowerCase();
+    return token;
+}
+
+export async function createSession(token, userId, expiresAt, csrfToken) {
 
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+
     const sessionData = {
         sessionId: sessionId,
         user: userId,
         expiresAt: expiresAt,
+        csrfToken: csrfToken,
     }
 
     try {

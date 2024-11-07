@@ -5,9 +5,10 @@ import { redirect } from "next/navigation";
 
 export async function LogoutAction(prevState, formData) {
 
-    /**
-     * verify csrf token
-     */
+    const result = {
+        status: false,
+        errors: []
+    }
 
     /**
      * validate the session
@@ -15,16 +16,25 @@ export async function LogoutAction(prevState, formData) {
 
     const session = await getSession();
 
+    /**
+     * verify csrf token
+     */
+
+    const csrfToken = formData.get("csrf-token");
+
+    if(csrfToken !== session?.csrfToken) {
+        result.errors.push({message: "Invalid token"});
+        return result;
+    }
+
     if(!session) {
-        return {
-            message: "invalid request"
-        }
+        result.errors.push({message: "Invalid request"});
+        return result;
     }
 
     if(session?.user === null) {
-        return {
-            message: "invalid request"
-        }
+        result.errors.push({message: "Invalid request"});
+        return result;
     }
 
     await deleteUserSessions(session.user._id);
@@ -32,7 +42,4 @@ export async function LogoutAction(prevState, formData) {
 
     redirect("/login");
 
-    return {
-        message: "signed out"
-    }
 }
