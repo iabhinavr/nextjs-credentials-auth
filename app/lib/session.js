@@ -33,13 +33,6 @@ export async function getSession() {
             await deleteUserSessions(session.user._id);
             return false;
         }
-
-        // if the session is about to expire, then extend it for another month from now
-
-        if(Date.now() > session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 10) {
-            const newExpiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-            await Session.updateOne({sessionId: sessionId}, {expiresAt: newExpiresAt}).exec();
-        }
         
         return session;
 

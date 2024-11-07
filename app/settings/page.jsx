@@ -11,8 +11,6 @@ export default async function Page() {
         redirect("/login");
     }
 
-    console.log(session);
-
     return (
         <>
         <div className="admin-page">
@@ -20,7 +18,7 @@ export default async function Page() {
             <h2>Change Password</h2>
             <LogoutForm csrfToken={session?.csrfToken} />
         </div>
-        <CookieChecker />
+        <CookieChecker csrfToken={session?.csrfToken} />
         </>
     )
 }

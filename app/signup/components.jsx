@@ -9,11 +9,17 @@ const initialState = {
     errors: []
 }
 
+function Submit() {
+    const { pending } = useFormStatus();
+
+    return (
+        <button disabled={pending}>{pending ? "Continue..." : "Continue"}</button>
+    )
+}
+
 export function SignUpForm() {
 
     const [state, action] = useActionState(signupAction, initialState);
-
-    const { pending } = useFormStatus();
 
     return (
         <>
@@ -39,8 +45,7 @@ export function SignUpForm() {
             <label htmlFor="signup-form-password">Password</label>
             <input type="password" name="password" id="signup-form-password" required autoComplete="new-password" />
 
-            <button>Continue</button>
-
+            <Submit />
         </form>
         </>
         

@@ -1,7 +1,7 @@
 "use client";
 
 import { LogoutAction } from "./actions";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 
 const initialState = {
     status: null,
