@@ -36,8 +36,6 @@ export async function loginAction(prevState, formData) {
 
     await createSession(token, user._id, expiresAt, csrfToken);
     await setSessionTokenCookie(token, expiresAt);
-
-    redirect("/settings");
     
     result.status = true;
     return result;

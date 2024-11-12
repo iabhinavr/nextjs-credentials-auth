@@ -8,7 +8,7 @@ export default async function Page() {
     const session = await getSession();
 
     if(!session) {
-        redirect("/login");
+        redirect("/login?redirect_to=/settings");
     }
 
     return (

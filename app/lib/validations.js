@@ -53,3 +53,12 @@ const signupSchema = z.object({
     }
   }
 
+  export function validateRedirectPath(path) {
+    const allowedPaths = ["/settings", "/"];
+
+    if(allowedPaths.includes(path)) {
+      return true;
+    }
+    return false;
+  }
+
